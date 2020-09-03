@@ -37,6 +37,8 @@ public class MyPageViewHandler {
     }
 
 
+
+
     @StreamListener(KafkaProcessor.INPUT)
     public void whenCanceled_then_UPDATE_1(@Payload Canceled canceled) {
         try {
@@ -85,6 +87,27 @@ public class MyPageViewHandler {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     *        홍보정보 추가
+     * */
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenIncrementRequested_then_CREATE_2 (@Payload IncrementRequested incrementRequested) {
+        try {
+            if (incrementRequested.isMe()) {
+                // view 객체 생성
+                MyPage myPage = new MyPage();
+                // view 객체에 이벤트의 Value 를 set 함
+                myPage.setHospitalNm(incrementRequested.getHospitalNm());
+                myPage.setStatus(incrementRequested.getStatus());
+                // view 레파지 토리에 save
+                myPageRepository.save(myPage);
+            }
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
